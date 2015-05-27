@@ -2,6 +2,7 @@ package com.example.a1nagar.weatherapp.service;
 
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.util.Log;
 
 import com.example.a1nagar.weatherapp.data.Channel;
 
@@ -20,8 +21,6 @@ import java.net.URLConnection;
 public class YahooWeatherService {
     private WeatherServiceCallback callback;
     private  Exception error;
-
-
     private String location;
 
     public YahooWeatherService(WeatherServiceCallback callback) {
@@ -33,19 +32,23 @@ public class YahooWeatherService {
         return location;
     }
 
-    public void refreshWeather(final String location) {
+    public void refreshWeather( String l) {
+
+        this.location = l;
 
         new AsyncTask<String, Void, String>() {
             @Override
             protected String doInBackground(String... strings) {
 
-                String YQL = String.format("select * from weather.forecast where woeid in (select woeid from geo.places(1) where text=\"%s\")",location);
-                String endpoint = String.format("https://query.yahooapis.com/v1/public/yql?q= %s &format=json", Uri.encode(YQL));
+                String YQL = String.format("select * from weather.forecast where woeid in (select woeid from geo.places(1) where text=\"%s\")",strings[0]);
+                String endpoint = String.format("https://query.yahooapis.com/v1/public/yql?q=%s&format=json", Uri.encode(YQL));
+                Log.d("a",Uri.encode(YQL));
 
                 try {
                     URL url = new URL(endpoint);
 
                     URLConnection conn = url.openConnection();
+                    conn.setUseCaches(false);
                     InputStream inputStream = conn.getInputStream();
                     BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
                     StringBuilder result = new StringBuilder();
@@ -95,7 +98,7 @@ public class YahooWeatherService {
 
             }
 
-        }.execute(location);
+        }.execute(l);
 
     }
 

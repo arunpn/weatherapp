@@ -2,6 +2,7 @@ package com.example.a1nagar.weatherapp;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -10,6 +11,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.a1nagar.weatherapp.data.Channel;
+import com.example.a1nagar.weatherapp.data.Item;
 import com.example.a1nagar.weatherapp.service.WeatherServiceCallback;
 import com.example.a1nagar.weatherapp.service.YahooWeatherService;
 
@@ -43,13 +45,27 @@ public class WeatherActivity extends Activity implements WeatherServiceCallback 
         dialog.setMessage("Loading");
         dialog.show();
 
-        service.refreshWeather("Austin, TX");
+        service.refreshWeather("Dallas, TX");
 
     }
 
     @Override
     public void serviceSuccess(Channel channel) {
         dialog.hide();
+
+        Item item = channel.getItem();
+
+        int resourceId = getResources().getIdentifier("drawable/icon_" + item.getCondition().getCode(), null, getPackageName());
+
+        @SuppressWarnings("deprecation")
+        Drawable weatherIconDrawble = getResources().getDrawable(resourceId);
+
+        weatherIconImageView.setImageDrawable(weatherIconDrawble);
+
+        temperatureTextView.setText(item.getCondition().getTemperature() + "\u00B0" + channel.getUnits().getTemperature());
+        conditionTextView.setText(item.getCondition().getDescription());
+        locationTextView.setText(service.getLocation());
+
 
     }
 
