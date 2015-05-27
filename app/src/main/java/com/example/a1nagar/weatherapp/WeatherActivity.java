@@ -1,6 +1,7 @@
 package com.example.a1nagar.weatherapp;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -21,6 +22,7 @@ public class WeatherActivity extends Activity implements WeatherServiceCallback 
     private TextView conditionTextView;
 
     private YahooWeatherService service;
+    private ProgressDialog dialog;
 
 
 
@@ -37,18 +39,24 @@ public class WeatherActivity extends Activity implements WeatherServiceCallback 
 
 
         service = new YahooWeatherService(this);
+        dialog = new ProgressDialog(this);
+        dialog.setMessage("Loading");
+        dialog.show();
+
         service.refreshWeather("Austin, TX");
 
     }
 
     @Override
     public void serviceSuccess(Channel channel) {
+        dialog.hide();
 
     }
 
     @Override
     public void serviceFailure(Exception e) {
 
+        dialog.hide();
         Toast.makeText(this,e.getMessage(),Toast.LENGTH_LONG).show();
 
     }
